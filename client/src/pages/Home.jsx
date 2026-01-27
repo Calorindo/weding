@@ -54,13 +54,13 @@ const Home = () => {
         const merchantCity = "Brasil";
         const finalAmount = amount || gift.price;
         const txId = gift.id || "PRESENTEPX";
-        
+
         // Implementação simplificada do PIX payload
         const formatField = (id, value) => {
             const len = value.length.toString().padStart(2, '0');
             return `${id}${len}${value}`;
         };
-        
+
         const crc16 = (buffer) => {
             let crc = 0xFFFF;
             for (let i = 0; i < buffer.length; i++) {
@@ -75,7 +75,7 @@ const Home = () => {
             }
             return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
         };
-        
+
         let payload = formatField('00', '01');
         const merchantInfo = formatField('00', 'br.gov.bcb.pix') + formatField('01', pixKey);
         payload += formatField('26', merchantInfo);
@@ -90,14 +90,14 @@ const Home = () => {
         payload += '6304';
         const crc = crc16(payload);
         payload += crc;
-        
+
         return payload;
     };
 
     const handleSelectGift = async (gift) => {
         // Detecta se está em produção (GitHub Pages)
         const isProduction = window.location.hostname !== 'localhost';
-        
+
         if (isProduction) {
             // Modo offline - gera PIX diretamente no frontend
             const payload = generateOfflinePixPayload(gift);
@@ -105,7 +105,7 @@ const Home = () => {
             setPixData(payload);
             return;
         }
-        
+
         // Modo desenvolvimento - tenta usar o servidor local
         try {
             const response = await fetch('http://localhost:3000/api/pix', {
@@ -145,7 +145,7 @@ const Home = () => {
 
         const amount = parseFloat(cashAmount);
         const isProduction = window.location.hostname !== 'localhost';
-        
+
         if (isProduction) {
             // Modo offline - gera PIX diretamente no frontend
             const payload = generateOfflinePixPayload({ name: 'Presente em Dinheiro', id: 'CASH' }, amount);
@@ -236,7 +236,16 @@ const Home = () => {
                 {/* Quote Section */}
                 <div className="max-w-2xl mx-auto text-center px-4 mb-8 sm:mb-12">
                     <p className="font-cursive text-2xl sm:text-3xl md:text-4xl text-charcoal mb-4 lowercase">
-                        "o amor é composto de uma só alma habitando dois corpos."
+                        "Seja bem-vindo ao nosso site de casamento!
+
+
+                        Criamos este espaço para compartilhar com vocês todos os detalhes do nosso grande dia. Estamos muito felizes de tê-lo conosco, por isso, a sua confirmação da sua presença é muito importante, a faça clicando no menu “Confirme sua Presença” e preenchendo os dados necessários até o dia 18/03/2026.
+
+
+                        Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa.
+
+
+                        Contamos com sua presença e carinho para celebrar conosco esse momento tão especial! 💖"
                     </p>
                 </div>
 
