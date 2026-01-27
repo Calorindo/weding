@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://calorindo.github.io/gabriel-e-manu",
+  "homepage": "https://calorindo.github.io/weding",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "yarn build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -f"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
