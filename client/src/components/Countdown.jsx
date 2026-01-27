@@ -30,11 +30,11 @@ const Countdown = () => {
 
     Object.keys(timeLeft).forEach((interval) => {
         timerComponents.push(
-            <div key={interval} className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm w-20 h-20 md:w-24 md:h-24 mx-2">
-                <span className="text-3xl md:text-4xl font-heading font-bold text-charcoal">
+            <div key={interval} className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-1 sm:mx-2">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-charcoal">
                     {timeLeft[interval].toString().padStart(2, '0')}
                 </span>
-                <span className="text-[10px] md:text-xs uppercase tracking-widest text-pastel-text mt-1 font-heading font-semibold">
+                <span className="text-[8px] sm:text-[10px] md:text-xs uppercase tracking-widest text-pastel-text mt-1 font-heading font-semibold">
                     {interval}
                 </span>
             </div>
@@ -42,17 +42,17 @@ const Countdown = () => {
     });
 
     return (
-        <div className="w-full bg-charcoal py-12 mt-8">
+        <div className="w-full bg-charcoal py-8 sm:py-12 mt-6 sm:mt-8">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center space-y-6">
-                    <h3 className="text-white text-lg tracking-[0.2em] font-heading font-light uppercase">Contagem Regressiva</h3>
+                <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+                    <h3 className="text-white text-sm sm:text-lg tracking-[0.2em] font-heading font-light uppercase">Contagem Regressiva</h3>
                     <div className="flex justify-center flex-wrap animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         {timerComponents.length ? (
-                            <div className="flex">
+                            <div className="flex flex-wrap justify-center gap-2 sm:gap-0">
                                 {timerComponents}
                             </div>
                         ) : (
-                            <span className="text-2xl font-cursive text-white">Chegou o grande dia!</span>
+                            <span className="text-xl sm:text-2xl font-cursive text-white">Chegou o grande dia!</span>
                         )}
                     </div>
                 </div>
