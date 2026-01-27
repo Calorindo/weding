@@ -25,7 +25,6 @@ const Navbar = () => {
         { name: 'Home', id: 'home' },
         { name: 'O Casal', id: 'casal' },
         { name: 'Cerimônia e Recepção', id: 'cerimonia' },
-        { name: 'Confirme sua Presença', id: 'rsvp' },
         { name: 'Lista de Presentes', id: 'lista' },
     ];
 
@@ -71,8 +70,8 @@ const Navbar = () => {
                             ))}
                         </>
                     ) : (
-                        <Link 
-                            to="/" 
+                        <Link
+                            to="/"
                             className={`flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-bold transition-colors ${scrolled ? 'text-gray-500 hover:text-charcoal' : 'text-gray-600 hover:text-charcoal'
                                 }`}
                         >
@@ -99,8 +98,8 @@ const Navbar = () => {
                                 ))}
                             </>
                         ) : (
-                            <Link 
-                                to="/" 
+                            <Link
+                                to="/"
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="flex items-center gap-2 text-sm uppercase tracking-widest text-gray-600 hover:text-charcoal py-2 border-b border-gray-100"
                             >

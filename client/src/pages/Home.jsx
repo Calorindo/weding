@@ -5,7 +5,6 @@ import PixModal from '../components/PixModal';
 import Countdown from '../components/Countdown';
 import About from '../components/About';
 import Ceremony from '../components/Ceremony';
-import RSVP from '../components/RSVP';
 import { db } from '../lib/firebase';
 import { ref, onValue } from "firebase/database";
 import photo1 from '../assets/photo1.jpg'; // Center/Main
@@ -217,7 +216,7 @@ const Home = () => {
                     Gabriel + Emanuely
                 </h1>
                 <p className="text-xs sm:text-sm md:text-base font-sans font-bold tracking-[0.2em] text-gray-500 mb-8 sm:mb-12 uppercase">
-                    18.04.2026 • Brasil
+                    18.04.2026 • Sítio da Figueira
                 </p>
 
                 {/* Photo Grid */}
@@ -240,7 +239,7 @@ const Home = () => {
                         <div className="space-y-3 text-gray-600 font-sans text-xs sm:text-sm leading-relaxed">
                             <p>Criamos este espaço para compartilhar todos os detalhes do nosso casamento. Estamos felizes de tê-los conosco!</p>
 
-                            <p className="font-medium text-charcoal">📅 Confirme sua presença até <span className="font-bold">18/03/2026</span></p>
+
 
                             <p>Escolha um presente da nossa lista online ou nos presenteie no dia da festa.</p>
 
@@ -260,8 +259,7 @@ const Home = () => {
             {/* Ceremony Section */}
             <Ceremony />
 
-            {/* RSVP Section */}
-            <RSVP />
+
 
             {/* Gift Registry Section */}
             <div id="lista" className="container mx-auto px-4 py-12 sm:py-16 space-y-8 sm:space-y-12">
