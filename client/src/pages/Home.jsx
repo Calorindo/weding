@@ -328,7 +328,7 @@ const Home = () => {
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-charcoal"></div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12 max-w-7xl mx-auto">
                         {filteredAndSortedGifts.map(gift => (
                             <GiftCard
                                 key={gift.id}
