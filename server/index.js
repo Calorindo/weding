@@ -84,7 +84,7 @@ app.post('/api/gifts/:id/select', (req, res) => {
 
 // POST /api/pix (Dynamic Amount)
 app.post('/api/pix', (req, res) => {
-    const { amount, message } = req.body;
+    const { amount, message, txid } = req.body;
 
     if (!amount || amount <= 0) {
         return res.status(400).json({ error: 'Invalid amount' });
@@ -94,9 +94,9 @@ app.post('/api/pix', (req, res) => {
     const pixKey = "gabrielcalorindo+btg@gmail.com";
     const merchantName = "Noivo e Noiva";
     const merchantCity = "Brasil";
-    const txId = "PRESENTEPX"; // Generic TxID
+    const transactionId = txid || "PRESENTEPX"; // Use provided txid or generic
 
-    const payload = generatePixPayload(pixKey, merchantName, merchantCity, parseFloat(amount), txId);
+    const payload = generatePixPayload(pixKey, merchantName, merchantCity, parseFloat(amount), transactionId);
 
     res.json({
         payload,

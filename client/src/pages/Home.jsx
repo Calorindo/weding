@@ -47,37 +47,66 @@ const Home = () => {
         return () => unsubscribe();
     }, [fetchGifts]);
 
-    const handleSelectGift = async (gift) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/gifts/${gift.id}/select`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                setSelectedGift(gift);
-                setPixData(data.payload);
-            } else {
-                console.error('Erro ao gerar PIX');
-                // Fallback para modo offline
-                setSelectedGift(gift);
-                setPixData(`Erro ao gerar PIX para ${gift.name}`);
+    // Função para gerar PIX offline usando a mesma lógica do servidor
+    const generateOfflinePixPayload = (gift, amount = null) => {
+        const pixKey = "gabrielcalorindo+btg@gmail.com";
+        const merchantName = "Noivo e Noiva";
+        const merchantCity = "Brasil";
+        const finalAmount = amount || gift.price;
+        const txId = gift.id || "PRESENTEPX";
+        
+        // Implementação simplificada do PIX payload
+        const formatField = (id, value) => {
+            const len = value.length.toString().padStart(2, '0');
+            return `${id}${len}${value}`;
+        };
+        
+        const crc16 = (buffer) => {
+            let crc = 0xFFFF;
+            for (let i = 0; i < buffer.length; i++) {
+                crc ^= (buffer.charCodeAt(i) << 8);
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) !== 0) {
+                        crc = (crc << 1) ^ 0x1021;
+                    } else {
+                        crc = (crc << 1);
+                    }
+                }
             }
-        } catch (error) {
-            console.error('Erro de conexão:', error);
-            // Fallback para modo offline
-            setSelectedGift(gift);
-            setPixData(`Erro de conexão ao gerar PIX para ${gift.name}`);
-        }
+            return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        };
+        
+        let payload = formatField('00', '01');
+        const merchantInfo = formatField('00', 'br.gov.bcb.pix') + formatField('01', pixKey);
+        payload += formatField('26', merchantInfo);
+        payload += formatField('52', '0000');
+        payload += formatField('53', '986');
+        payload += formatField('54', finalAmount.toFixed(2));
+        payload += formatField('58', 'BR');
+        payload += formatField('59', merchantName);
+        payload += formatField('60', merchantCity);
+        const additionalData = formatField('05', txId);
+        payload += formatField('62', additionalData);
+        payload += '6304';
+        const crc = crc16(payload);
+        payload += crc;
+        
+        return payload;
     };
 
-    const handleCashGift = async (e) => {
-        e.preventDefault();
-        if (!cashAmount || parseFloat(cashAmount) <= 0) return;
-
+    const handleSelectGift = async (gift) => {
+        // Detecta se está em produção (GitHub Pages)
+        const isProduction = window.location.hostname !== 'localhost';
+        
+        if (isProduction) {
+            // Modo offline - gera PIX diretamente no frontend
+            const payload = generateOfflinePixPayload(gift);
+            setSelectedGift(gift);
+            setPixData(payload);
+            return;
+        }
+        
+        // Modo desenvolvimento - tenta usar o servidor local
         try {
             const response = await fetch('http://localhost:3000/api/pix', {
                 method: 'POST',
@@ -85,28 +114,78 @@ const Home = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    amount: parseFloat(cashAmount),
+                    amount: gift.price,
+                    message: `Presente: ${gift.name}`,
+                    txid: gift.id
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setSelectedGift(gift);
+                setPixData(data.payload);
+            } else {
+                // Fallback para modo offline
+                const payload = generateOfflinePixPayload(gift);
+                setSelectedGift(gift);
+                setPixData(payload);
+            }
+        } catch (error) {
+            console.error('Erro de conexão:', error);
+            // Fallback para modo offline
+            const payload = generateOfflinePixPayload(gift);
+            setSelectedGift(gift);
+            setPixData(payload);
+        }
+    };
+
+    const handleCashGift = async (e) => {
+        e.preventDefault();
+        if (!cashAmount || parseFloat(cashAmount) <= 0) return;
+
+        const amount = parseFloat(cashAmount);
+        const isProduction = window.location.hostname !== 'localhost';
+        
+        if (isProduction) {
+            // Modo offline - gera PIX diretamente no frontend
+            const payload = generateOfflinePixPayload({ name: 'Presente em Dinheiro', id: 'CASH' }, amount);
+            setSelectedGift({ name: `Presente em Dinheiro` });
+            setPixData(payload);
+            setShowCashModal(false);
+            return;
+        }
+
+        // Modo desenvolvimento - tenta usar o servidor local
+        try {
+            const response = await fetch('http://localhost:3000/api/pix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: amount,
                     message: `Presente em dinheiro - R$ ${cashAmount}`
                 })
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
                 setSelectedGift({ name: `Presente em Dinheiro` });
                 setPixData(data.payload);
                 setShowCashModal(false);
             } else {
-                console.error('Erro ao gerar PIX');
                 // Fallback para modo offline
+                const payload = generateOfflinePixPayload({ name: 'Presente em Dinheiro', id: 'CASH' }, amount);
                 setSelectedGift({ name: `Presente em Dinheiro` });
-                setPixData(`Erro ao gerar PIX para R$ ${cashAmount}`);
+                setPixData(payload);
                 setShowCashModal(false);
             }
         } catch (error) {
             console.error('Erro de conexão:', error);
             // Fallback para modo offline
+            const payload = generateOfflinePixPayload({ name: 'Presente em Dinheiro', id: 'CASH' }, amount);
             setSelectedGift({ name: `Presente em Dinheiro` });
-            setPixData(`Erro de conexão ao gerar PIX para R$ ${cashAmount}`);
+            setPixData(payload);
             setShowCashModal(false);
         }
     };

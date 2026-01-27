@@ -4,7 +4,7 @@ import { Gift } from 'lucide-react';
 const GiftCard = ({ gift, onSelect }) => {
     return (
         <div className="group flex flex-col h-full bg-white transition-all duration-300 hover:-translate-y-1">
-            <div className="aspect-[4/5] bg-gray-50 relative overflow-hidden mb-4">
+            <div className="aspect-square sm:aspect-[4/5] bg-gray-50 relative overflow-hidden mb-4">
                 {gift.imageUrl ? (
                     <img src={gift.imageUrl} alt={gift.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 ) : (
