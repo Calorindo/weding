@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { SlidersHorizontal, Search, Banknote } from 'lucide-react';
 import GiftCard from '../components/GiftCard';
 import PixModal from '../components/PixModal';
@@ -7,6 +6,8 @@ import Countdown from '../components/Countdown';
 import About from '../components/About';
 import Ceremony from '../components/Ceremony';
 import RSVP from '../components/RSVP';
+import { db } from '../lib/firebase';
+import { ref, onValue } from "firebase/database";
 import photo1 from '../assets/photo1.jpg'; // Center/Main
 import photo2 from '../assets/photo2.jpg'; // Side 1
 import photo3 from '../assets/photo3.jpg'; // Side 2
@@ -23,48 +24,44 @@ const Home = () => {
     const [showCashModal, setShowCashModal] = useState(false);
     const [cashAmount, setCashAmount] = useState('');
 
-    const fetchGifts = React.useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:3000/api/gifts');
-            setGifts(response.data);
-        } catch (error) {
-            console.error('Error fetching gifts:', error);
-        } finally {
+    const fetchGifts = React.useCallback(() => {
+        const giftsRef = ref(db, 'gifts');
+        const unsubscribe = onValue(giftsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const giftsData = snapshot.val();
+                const giftList = Object.entries(giftsData).map(([key, value]) => ({
+                    id: key,
+                    ...value
+                }));
+                setGifts(giftList);
+            } else {
+                setGifts([]);
+            }
             setLoading(false);
-        }
+        });
+        return unsubscribe;
     }, []);
 
     useEffect(() => {
-        fetchGifts();
+        const unsubscribe = fetchGifts();
+        return () => unsubscribe();
     }, [fetchGifts]);
 
     const handleSelectGift = async (gift) => {
-        try {
-            const response = await axios.post(`http://localhost:3000/api/gifts/${gift.id}/select`);
-            setPixData(response.data.payload);
-            setSelectedGift(gift);
-        } catch (error) {
-            console.error('Error selecting gift:', error);
-            alert('Erro ao gerar Pix. Tente novamente.');
-        }
+        // Para GitHub Pages, vamos apenas mostrar as informações do presente
+        // sem integração com PIX por enquanto
+        setSelectedGift(gift);
+        setPixData(`Presente selecionado: ${gift.name} - R$ ${gift.price.toFixed(2)}`);
     };
 
     const handleCashGift = async (e) => {
         e.preventDefault();
         if (!cashAmount || parseFloat(cashAmount) <= 0) return;
 
-        try {
-            const response = await axios.post('http://localhost:3000/api/pix', {
-                amount: parseFloat(cashAmount),
-                message: 'Presente em Dinheiro'
-            });
-            setPixData(response.data.payload);
-            setSelectedGift({ name: `Presente em Dinheiro (R$ ${cashAmount})` });
-            setShowCashModal(false);
-        } catch (error) {
-            console.error('Error generating cash pix:', error);
-            alert('Erro ao gerar Pix.');
-        }
+        // Para GitHub Pages, vamos apenas mostrar as informações
+        setSelectedGift({ name: `Presente em Dinheiro (R$ ${cashAmount})` });
+        setPixData(`Presente em dinheiro: R$ ${cashAmount}`);
+        setShowCashModal(false);
     };
 
     const handleCloseModal = () => {

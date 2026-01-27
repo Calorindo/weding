@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Plus, Trash2, Image as ImageIcon, Users, Gift, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, Users, Gift, CheckCircle, XCircle, Edit3, X } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { ref, push, onValue, remove } from "firebase/database";
+import { ref, push, onValue, remove, update } from "firebase/database";
 
 const Admin = () => {
     const [activeTab, setActiveTab] = useState('guests'); // 'gifts' or 'guests'
@@ -15,17 +14,26 @@ const Admin = () => {
         imageUrl: ''
     });
 
-    const fetchGifts = React.useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:3000/api/gifts');
-            setGifts(response.data);
-        } catch (error) {
-            console.error('Error fetching gifts:', error);
-        }
+    const fetchGifts = React.useCallback(() => {
+        const giftsRef = ref(db, 'gifts');
+        const unsubscribe = onValue(giftsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const giftsData = snapshot.val();
+                const giftList = Object.entries(giftsData).map(([key, value]) => ({
+                    id: key,
+                    ...value
+                }));
+                setGifts(giftList);
+            } else {
+                setGifts([]);
+            }
+        });
+        return unsubscribe;
     }, []);
 
     useEffect(() => {
-        fetchGifts();
+        const unsubscribe = fetchGifts();
+        return () => unsubscribe();
     }, [fetchGifts]);
 
     const handleGiftSubmit = async (e) => {
@@ -33,9 +41,16 @@ const Admin = () => {
         if (!giftFormData.name || !giftFormData.price) return;
 
         try {
-            await axios.post('http://localhost:3000/api/gifts', giftFormData);
+            const giftsRef = ref(db, 'gifts');
+            const newGift = {
+                name: giftFormData.name,
+                price: parseFloat(giftFormData.price),
+                imageUrl: giftFormData.imageUrl || '',
+                status: 'available',
+                createdAt: new Date().toISOString()
+            };
+            await push(giftsRef, newGift);
             setGiftFormData({ name: '', price: '', imageUrl: '' });
-            fetchGifts();
         } catch (error) {
             console.error('Error adding gift:', error);
             alert('Erro ao adicionar presente');
@@ -46,8 +61,8 @@ const Admin = () => {
         if (!window.confirm('Tem certeza que deseja remover este item?')) return;
 
         try {
-            await axios.delete(`http://localhost:3000/api/gifts/${id}`);
-            fetchGifts();
+            const giftRef = ref(db, `gifts/${id}`);
+            await remove(giftRef);
         } catch (error) {
             console.error('Error deleting gift:', error);
         }
@@ -63,6 +78,13 @@ const Admin = () => {
     // --- GUESTS STATE & LOGIC ---
     const [guests, setGuests] = useState([]);
     const [guestFormData, setGuestFormData] = useState({
+        name: '',
+        adults: 1,
+        children: 0,
+        category: 'Amigo'
+    });
+    const [editingGuest, setEditingGuest] = useState(null);
+    const [editFormData, setEditFormData] = useState({
         name: '',
         adults: 1,
         children: 0,
@@ -141,6 +163,54 @@ const Admin = () => {
             ...guestFormData,
             [e.target.name]: e.target.value
         });
+    };
+
+    const handleEditGuest = (guest) => {
+        setEditingGuest(guest);
+        setEditFormData({
+            name: guest.name,
+            adults: guest.adults,
+            children: guest.children,
+            category: guest.category
+        });
+    };
+
+    const handleEditFormChange = (e) => {
+        setEditFormData({
+            ...editFormData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        if (!editFormData.name) {
+            alert('Nome é obrigatório');
+            return;
+        }
+
+        try {
+            const guestRef = ref(db, `guests/${editingGuest.id}`);
+            const updatedGuest = {
+                name: editFormData.name.toUpperCase(),
+                adults: parseInt(editFormData.adults),
+                children: parseInt(editFormData.children),
+                category: editFormData.category,
+                updatedAt: new Date().toISOString()
+            };
+            
+            await update(guestRef, updatedGuest);
+            setEditingGuest(null);
+            setEditFormData({ name: '', adults: 1, children: 0, category: 'Amigo' });
+        } catch (error) {
+            console.error('Error updating guest:', error);
+            alert('Erro ao atualizar convidado: ' + error.message);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingGuest(null);
+        setEditFormData({ name: '', adults: 1, children: 0, category: 'Amigo' });
     };
 
     // --- RENDER ---
@@ -357,13 +427,22 @@ const Admin = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => handleGuestDelete(guest.id)}
-                                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        title="Remover"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleEditGuest(guest)}
+                                            className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                            title="Editar"
+                                        >
+                                            <Edit3 className="w-5 h-5" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleGuestDelete(guest.id)}
+                                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Remover"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                             {guests.length === 0 && (
@@ -374,6 +453,98 @@ const Admin = () => {
                         </div>
                     </div>
                 </>
+            )}
+
+            {/* Edit Guest Modal */}
+            {editingGuest && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Editar Convidado</h3>
+                                <button
+                                    onClick={handleCancelEdit}
+                                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                            
+                            <form onSubmit={handleEditSubmit} className="space-y-4">
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-gray-700">Nome Completo</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={editFormData.name}
+                                        onChange={handleEditFormChange}
+                                        placeholder="NOME DO CONVIDADO"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pastel-green focus:border-transparent outline-none transition-all uppercase"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-gray-700">Categoria</label>
+                                    <select
+                                        name="category"
+                                        value={editFormData.category}
+                                        onChange={handleEditFormChange}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pastel-green focus:border-transparent outline-none transition-all"
+                                    >
+                                        <option value="Amigo">Amigo</option>
+                                        <option value="Parente">Parente</option>
+                                        <option value="Padrinho">Padrinho</option>
+                                        <option value="Noivos">Noivos</option>
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">Adultos</label>
+                                        <input
+                                            type="number"
+                                            name="adults"
+                                            value={editFormData.adults}
+                                            onChange={handleEditFormChange}
+                                            min="1"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pastel-green focus:border-transparent outline-none transition-all"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">Crianças</label>
+                                        <input
+                                            type="number"
+                                            name="children"
+                                            value={editFormData.children}
+                                            onChange={handleEditFormChange}
+                                            min="0"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pastel-green focus:border-transparent outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-3 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelEdit}
+                                        className="flex-1 px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-1 px-4 py-2 bg-pastel-green hover:bg-pastel-darkGreen text-pastel-text hover:text-white rounded-lg transition-colors font-medium"
+                                    >
+                                        Salvar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
