@@ -48,20 +48,67 @@ const Home = () => {
     }, [fetchGifts]);
 
     const handleSelectGift = async (gift) => {
-        // Para GitHub Pages, vamos apenas mostrar as informações do presente
-        // sem integração com PIX por enquanto
-        setSelectedGift(gift);
-        setPixData(`Presente selecionado: ${gift.name} - R$ ${gift.price.toFixed(2)}`);
+        try {
+            const response = await fetch(`http://localhost:3000/api/gifts/${gift.id}/select`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                setSelectedGift(gift);
+                setPixData(data.payload);
+            } else {
+                console.error('Erro ao gerar PIX');
+                // Fallback para modo offline
+                setSelectedGift(gift);
+                setPixData(`Erro ao gerar PIX para ${gift.name}`);
+            }
+        } catch (error) {
+            console.error('Erro de conexão:', error);
+            // Fallback para modo offline
+            setSelectedGift(gift);
+            setPixData(`Erro de conexão ao gerar PIX para ${gift.name}`);
+        }
     };
 
     const handleCashGift = async (e) => {
         e.preventDefault();
         if (!cashAmount || parseFloat(cashAmount) <= 0) return;
 
-        // Para GitHub Pages, vamos apenas mostrar as informações
-        setSelectedGift({ name: `Presente em Dinheiro (R$ ${cashAmount})` });
-        setPixData(`Presente em dinheiro: R$ ${cashAmount}`);
-        setShowCashModal(false);
+        try {
+            const response = await fetch('http://localhost:3000/api/pix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: parseFloat(cashAmount),
+                    message: `Presente em dinheiro - R$ ${cashAmount}`
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                setSelectedGift({ name: `Presente em Dinheiro` });
+                setPixData(data.payload);
+                setShowCashModal(false);
+            } else {
+                console.error('Erro ao gerar PIX');
+                // Fallback para modo offline
+                setSelectedGift({ name: `Presente em Dinheiro` });
+                setPixData(`Erro ao gerar PIX para R$ ${cashAmount}`);
+                setShowCashModal(false);
+            }
+        } catch (error) {
+            console.error('Erro de conexão:', error);
+            // Fallback para modo offline
+            setSelectedGift({ name: `Presente em Dinheiro` });
+            setPixData(`Erro de conexão ao gerar PIX para R$ ${cashAmount}`);
+            setShowCashModal(false);
+        }
     };
 
     const handleCloseModal = () => {
