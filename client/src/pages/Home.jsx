@@ -234,21 +234,20 @@ const Home = () => {
                 </div>
 
                 {/* Quote Section */}
-                <div className="max-w-2xl mx-auto text-center px-4 mb-8 sm:mb-12">
-                    <p className="font-cursive text-2xl sm:text-3xl md:text-4xl text-charcoal mb-4 lowercase">
-                        "Seja bem-vindo ao nosso site de casamento!
+                <div className="max-w-3xl mx-auto text-center px-4 mb-8 sm:mb-12">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100">
+                        <h3 className="font-heading text-base sm:text-lg text-charcoal uppercase tracking-[0.15em] mb-4">Bem-vindos!</h3>
+                        <div className="space-y-3 text-gray-600 font-sans text-xs sm:text-sm leading-relaxed">
+                            <p>Criamos este espaço para compartilhar todos os detalhes do nosso casamento. Estamos felizes de tê-los conosco!</p>
 
+                            <p className="font-medium text-charcoal">📅 Confirme sua presença até <span className="font-bold">18/03/2026</span></p>
 
-                        Criamos este espaço para compartilhar com vocês todos os detalhes do nosso grande dia. Estamos muito felizes de tê-lo conosco, por isso, a sua confirmação da sua presença é muito importante, a faça clicando no menu “Confirme sua Presença” e preenchendo os dados necessários até o dia 18/03/2026.
+                            <p>Escolha um presente da nossa lista online ou nos presenteie no dia da festa.</p>
 
-
-                        Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa.
-
-
-                        Contamos com sua presença e carinho para celebrar conosco esse momento tão especial! 💖"
-                    </p>
+                            <p className="font-cursive text-sm sm:text-base text-charcoal mt-4">Contamos com vocês! 💖</p>
+                        </div>
+                    </div>
                 </div>
-
                 {/* Countdown Section */}
                 <div className="w-full bg-slate-50 py-8 sm:py-12 mb-8 sm:mb-12">
                     <Countdown />
