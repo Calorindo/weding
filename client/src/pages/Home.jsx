@@ -49,10 +49,20 @@ const Home = () => {
     // Função para gerar PIX offline usando a mesma lógica do servidor
     const generateOfflinePixPayload = (gift, amount = null) => {
         const pixKey = "gabrielcalorindo+btg@gmail.com";
-        const merchantName = "Noivo e Noiva";
-        const merchantCity = "Brasil";
+
+        // Remove accents and special characters from merchant info
+        const normalizeStr = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        const merchantName = normalizeStr("Noivo e Noiva");
+        const merchantCity = normalizeStr("Brasil");
         const finalAmount = amount || gift.price;
-        const txId = gift.id || "PRESENTEPX";
+
+        // Sanitize TxID: uppercase, remove accents, keep only alphanumeric, limit to 25 chars
+        let rawTxId = gift.id || "PRESENTEPX";
+        const txId = normalizeStr(rawTxId)
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, '')
+            .substring(0, 25) || "PRESENTEPX";
 
         // Implementação simplificada do PIX payload
         const formatField = (id, value) => {
