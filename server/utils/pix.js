@@ -63,3 +63,85 @@ function generatePixPayload(key, name, city, amount, txId = '***') {
 }
 
 module.exports = { generatePixPayload };
+
+function validatePixCode(pixCode) {
+    if (!pixCode || pixCode.length < 4) {
+        return { valid: false, error: 'Código PIX muito curto' };
+    }
+
+    // Extrair o CRC do final do código
+    const crcFromCode = pixCode.slice(-4);
+    const payloadWithoutCrc = pixCode.slice(0, -4);
+    
+    // Calcular o CRC esperado
+    const expectedCrc = crc16(payloadWithoutCrc);
+    
+    if (crcFromCode !== expectedCrc) {
+        return { 
+            valid: false, 
+            error: `CRC inválido. Esperado: ${expectedCrc}, Recebido: ${crcFromCode}` 
+        };
+    }
+    
+    return { valid: true, error: null };
+}
+
+function parsePixCode(pixCode) {
+    const result = {
+        payloadFormat: null,
+        merchantAccount: null,
+        merchantCategory: null,
+        currency: null,
+        amount: null,
+        country: null,
+        merchantName: null,
+        merchantCity: null,
+        additionalData: null,
+        crc: null
+    };
+    
+    let index = 0;
+    
+    while (index < pixCode.length - 4) { // -4 para o CRC no final
+        const id = pixCode.substr(index, 2);
+        const length = parseInt(pixCode.substr(index + 2, 2));
+        const value = pixCode.substr(index + 4, length);
+        
+        switch (id) {
+            case '00':
+                result.payloadFormat = value;
+                break;
+            case '26':
+                result.merchantAccount = value;
+                break;
+            case '52':
+                result.merchantCategory = value;
+                break;
+            case '53':
+                result.currency = value;
+                break;
+            case '54':
+                result.amount = parseFloat(value);
+                break;
+            case '58':
+                result.country = value;
+                break;
+            case '59':
+                result.merchantName = value;
+                break;
+            case '60':
+                result.merchantCity = value;
+                break;
+            case '62':
+                result.additionalData = value;
+                break;
+        }
+        
+        index += 4 + length;
+    }
+    
+    result.crc = pixCode.slice(-4);
+    return result;
+}
+
+module.exports = { generatePixPayload, validatePixCode, parsePixCode };

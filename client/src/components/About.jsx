@@ -6,11 +6,12 @@ const About = () => {
     const profiles = [
         {
             name: "GABRIEL",
-            image: "https://cdn-assets-legacy.casar.com/thumb/300x300x1xx226,339,492,492/dados/sitenoivos/wed1250782/paginas/DuC7f_1767485801.jpeg"
+            image: "https://cdn-assets-legacy.casar.com/thumb/300x300x1xx611,388,279,279/dados/sitenoivos/wed1250782/paginas/dxc4f_1767485847.jpeg"
         },
         {
             name: "EMANUELY",
-            image: "https://cdn-assets-legacy.casar.com/thumb/300x300x1xx611,388,279,279/dados/sitenoivos/wed1250782/paginas/dxc4f_1767485847.jpeg"
+            image: "https://cdn-assets-legacy.casar.com/thumb/300x300x1xx226,339,492,492/dados/sitenoivos/wed1250782/paginas/DuC7f_1767485801.jpeg"
+
         }
     ];
 
