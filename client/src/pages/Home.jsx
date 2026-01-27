@@ -245,15 +245,10 @@ const Home = () => {
                 {/* Quote Section */}
                 <div className="max-w-3xl mx-auto text-center px-4 mb-8 sm:mb-12">
                     <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 sm:p-6 shadow-sm border border-gray-100">
-                        <h3 className="font-heading text-base sm:text-lg text-charcoal uppercase tracking-[0.15em] mb-4">Bem-vindos!</h3>
+                        <h3 className="font-heading text-base sm:text-lg text-charcoal uppercase tracking-[0.15em] mb-4">Seja bem-vindo ao nosso site de casamento!</h3>
                         <div className="space-y-3 text-gray-600 font-sans text-xs sm:text-sm leading-relaxed">
-                            <p>Criamos este espaço para compartilhar todos os detalhes do nosso casamento. Estamos felizes de tê-los conosco!</p>
-
-
-
-                            <p>Escolha um presente da nossa lista online ou nos presenteie no dia da festa.</p>
-
-                            <p className="font-cursive text-sm sm:text-base text-charcoal mt-4">Contamos com vocês! 💖</p>
+                            <p>Criamos este espaço para compartilhar com vocês todos os detalhes do nosso grande dia. Estamos muito felizes de tê-lo conosco!</p>
+                            <p>Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa!</p>
                         </div>
                     </div>
                 </div>

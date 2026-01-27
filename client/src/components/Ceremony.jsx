@@ -66,7 +66,7 @@ const Ceremony = () => {
                                 ></iframe>
                             </div>
                             <a
-                                href="https://goo.gl/maps/example"
+                                href="https://www.google.com/maps?q=Sítio+da+Figueira,+Estrada+Retiro+da+Ponta+Grossa+2500+-+Ponta+Grossa,+Porto+Alegre+-+RS"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="mt-3 sm:mt-4 inline-block text-xs font-bold uppercase tracking-widest text-charcoal border-b border-charcoal hover:text-gray-600 hover:border-gray-600 transition-colors"
