@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+body {
+    background-color: #FBFBFB;
+    color: #4B4B4B;
+    font-family: 'Lato', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Raleway', sans-serif;
+    color: #4B4B4B;
+    font-weight: 400;
+    /* Reference site uses lighter weights often */
+}

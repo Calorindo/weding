@@ -1,0 +1,17 @@
+{
+  "name": "casamento",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"yarn --cwd client dev\" \"node server/index.js\"",
+    "install:all": "yarn install && cd client && yarn install && cd ../server && yarn install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
