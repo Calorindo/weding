@@ -302,7 +302,7 @@ const Home = () => {
                 <div className="text-center space-y-4">
                     <h2 className="text-2xl sm:text-3xl font-heading text-charcoal uppercase tracking-[0.2em]">Lista de Presentes</h2>
                     <div className="w-16 h-px bg-charcoal mx-auto"></div>
-                    <p className="text-sm sm:text-base text-gray-500 font-light font-sans tracking-wide px-4">Queridos amigos e familiares, Caso queiram nos presentear, selecionamos alguns itens para o nosso lar.</p>
+                    <p className="text-sm sm:text-base text-gray-500 font-light font-sans tracking-wide px-4">Queridos amigos e familiares, caso queiram nos presentear, selecionamos alguns itens para o nosso lar.</p>
                 </div>
 
                 {/* Filters & Actions */}
