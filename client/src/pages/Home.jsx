@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { SlidersHorizontal, Search, Banknote } from 'lucide-react';
+import { SlidersHorizontal, Search, Banknote, ShoppingBag } from 'lucide-react';
 import GiftCard from '../components/GiftCard';
 import PixModal from '../components/PixModal';
+import CartModal from '../components/CartModal';
 import Countdown from '../components/Countdown';
+
 import About from '../components/About';
 import Ceremony from '../components/Ceremony';
 import { db } from '../lib/firebase';
@@ -18,6 +20,10 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState('price-asc');
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Cart State
+    const [cart, setCart] = useState([]);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     // Custom Cash Gift State
     const [showCashModal, setShowCashModal] = useState(false);
@@ -103,15 +109,36 @@ const Home = () => {
         return payload;
     };
 
-    const handleSelectGift = async (gift) => {
+
+
+    const addToCart = (gift) => {
+        setCart([...cart, gift]);
+        setIsCartOpen(true);
+    };
+
+    const removeFromCart = (index) => {
+        const newCart = [...cart];
+        newCart.splice(index, 1);
+        setCart(newCart);
+    };
+
+    const handleCartCheckout = async () => {
+        const total = cart.reduce((acc, item) => acc + item.price, 0);
+        const compositeGift = {
+            id: 'CART' + Date.now().toString(36).toUpperCase(),
+            name: `Lista de Casamento (${cart.length} itens)`,
+            price: total
+        };
+
         // Detecta se está em produção (GitHub Pages)
         const isProduction = window.location.hostname !== 'localhost';
 
         if (isProduction) {
             // Modo offline - gera PIX diretamente no frontend
-            const payload = generateOfflinePixPayload(gift);
-            setSelectedGift(gift);
+            const payload = generateOfflinePixPayload(compositeGift);
+            setSelectedGift(compositeGift);
             setPixData(payload);
+            setIsCartOpen(false);
             return;
         }
 
@@ -123,30 +150,34 @@ const Home = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    amount: gift.price,
-                    message: `Presente: ${gift.name}`,
-                    txid: gift.id
+                    amount: total,
+                    message: `Lista de Casamento (${cart.length} itens)`,
+                    txid: compositeGift.id
                 })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                setSelectedGift(gift);
+                setSelectedGift(compositeGift);
                 setPixData(data.payload);
+                setIsCartOpen(false);
             } else {
                 // Fallback para modo offline
-                const payload = generateOfflinePixPayload(gift);
-                setSelectedGift(gift);
+                const payload = generateOfflinePixPayload(compositeGift);
+                setSelectedGift(compositeGift);
                 setPixData(payload);
+                setIsCartOpen(false);
             }
         } catch (error) {
             console.error('Erro de conexão:', error);
             // Fallback para modo offline
-            const payload = generateOfflinePixPayload(gift);
-            setSelectedGift(gift);
+            const payload = generateOfflinePixPayload(compositeGift);
+            setSelectedGift(compositeGift);
             setPixData(payload);
+            setIsCartOpen(false);
         }
     };
+
 
     const handleCashGift = async (e) => {
         e.preventDefault();
@@ -328,7 +359,7 @@ const Home = () => {
                             <GiftCard
                                 key={gift.id}
                                 gift={gift}
-                                onSelect={handleSelectGift}
+                                onSelect={addToCart}
                             />
                         ))}
                     </div>
@@ -341,13 +372,35 @@ const Home = () => {
                 )}
             </div>
 
-            {/* Pix Modal (Existing) */}
             <PixModal
                 isOpen={!!selectedGift}
                 onClose={handleCloseModal}
                 payload={pixData}
                 giftName={selectedGift?.name}
             />
+
+            {/* Cart Modal */}
+            <CartModal
+                isOpen={isCartOpen}
+                onClose={() => setIsCartOpen(false)}
+                items={cart}
+                onRemoveItem={removeFromCart}
+                onCheckout={handleCartCheckout}
+            />
+
+            {/* Floating Cart Button */}
+            {cart.length > 0 && !isCartOpen && (
+                <button
+                    onClick={() => setIsCartOpen(true)}
+                    className="fixed bottom-6 right-6 z-40 bg-black text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 flex items-center justify-center group"
+                >
+                    <ShoppingBag className="w-6 h-6" />
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                        {cart.length}
+                    </span>
+                </button>
+            )}
+
 
             {/* Cash Gift Modal (New) */}
             {showCashModal && (
