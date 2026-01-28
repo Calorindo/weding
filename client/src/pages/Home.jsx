@@ -232,10 +232,10 @@ const Home = () => {
                 {/* Photo Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 w-full max-w-7xl px-2 sm:px-4 mb-12 sm:mb-16">
                     <div className="aspect-[3/4] overflow-hidden">
-                        <img src={photo2} alt="Gabriel and Emanuely 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                        <img src={photo1} alt="Gabriel and Emanuely 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="aspect-[3/4] overflow-hidden">
-                        <img src={photo1} alt="Gabriel and Emanuely Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                        <img src={photo2} alt="Gabriel and Emanuely Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="aspect-[3/4] overflow-hidden">
                         <img src={photo3} alt="Gabriel and Emanuely 3" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
@@ -248,7 +248,7 @@ const Home = () => {
                         <h3 className="font-heading text-base sm:text-lg text-charcoal uppercase tracking-[0.15em] mb-4">Seja bem-vindo ao nosso site de casamento!</h3>
                         <div className="space-y-3 text-gray-600 font-sans text-xs sm:text-sm leading-relaxed">
                             <p>Criamos este espaço para compartilhar com vocês todos os detalhes do nosso grande dia. Estamos muito felizes de tê-lo conosco!</p>
-                            <p>Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa!</p>
+                            <p>Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa! Contamos com sua presença e carinho para celebrar conosco esse momento tão especial! 💖</p>
                         </div>
                     </div>
                 </div>
@@ -271,7 +271,7 @@ const Home = () => {
                 <div className="text-center space-y-4">
                     <h2 className="text-2xl sm:text-3xl font-heading text-charcoal uppercase tracking-[0.2em]">Lista de Presentes</h2>
                     <div className="w-16 h-px bg-charcoal mx-auto"></div>
-                    <p className="text-sm sm:text-base text-gray-500 font-light font-sans tracking-wide px-4">Queridos amigos e familiares, a presença de vocês é o nosso maior presente.<br className="hidden sm:block" />Caso queiram nos presentear, selecionamos alguns itens para o nosso lar.</p>
+                    <p className="text-sm sm:text-base text-gray-500 font-light font-sans tracking-wide px-4">Queridos amigos e familiares, Caso queiram nos presentear, selecionamos alguns itens para o nosso lar.</p>
                 </div>
 
                 {/* Filters & Actions */}
