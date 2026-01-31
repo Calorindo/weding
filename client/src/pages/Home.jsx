@@ -355,6 +355,18 @@ const Home = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-12 max-w-7xl mx-auto">
+                        {/* Custom Cash Gift Card */}
+                        <GiftCard
+                            gift={{
+                                id: 'custom-cash',
+                                name: 'Presente com Valor Livre',
+                                price: 0,
+                                imageUrl: null,
+                                isCustom: true
+                            }}
+                            onSelect={() => setShowCashModal(true)}
+                        />
+
                         {filteredAndSortedGifts.map(gift => (
                             <GiftCard
                                 key={gift.id}
@@ -432,7 +444,7 @@ const Home = () => {
                             <div className="flex gap-4">
                                 <button
                                     type="submit"
-                                    className="w-full py-3 sm:py-4 bg-charcoal text-white hover:bg-charcoal-light transition-colors uppercase tracking-[0.2em] text-xs font-bold"
+                                    className="w-full py-3 sm:py-4 border-2 border-charcoal result-btn text-charcoal hover:bg-gray-50 transition-colors uppercase tracking-[0.2em] text-xs font-bold"
                                 >
                                     Gerar Pix
                                 </button>
