@@ -279,7 +279,8 @@ const Home = () => {
                         <h3 className="font-heading text-base sm:text-lg text-charcoal uppercase tracking-[0.15em] mb-4">Seja bem-vindo ao nosso site de casamento!</h3>
                         <div className="space-y-3 text-gray-600 font-sans text-xs sm:text-sm leading-relaxed">
                             <p>Criamos este espaço para compartilhar com vocês todos os detalhes do nosso grande dia. Estamos muito felizes de tê-lo conosco!</p>
-                            <p>Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa! Contamos com sua presença e carinho para celebrar conosco esse momento tão especial! 💖</p>
+                            <p>Aproveitamos também para deixar aqui todas as informações sobre como nos presentear, caso queira — você pode escolher um mimo na nossa lista de presentes online aqui neste site, ou, se preferir, nos presentear pessoalmente no dia da festa! </p>
+                            <p>Contamos com sua presença e carinho para celebrar conosco esse momento tão especial! 💖</p>
                         </div>
                     </div>
                 </div>

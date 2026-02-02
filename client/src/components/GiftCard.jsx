@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gift, Banknote } from 'lucide-react';
+import { Gift, Banknote, Handshake } from 'lucide-react';
 
 const GiftCard = ({ gift, onSelect }) => {
     return (
@@ -10,7 +10,7 @@ const GiftCard = ({ gift, onSelect }) => {
                 ) : (
                     <div className="flex items-center justify-center h-full w-full bg-gray-50 text-gray-300">
                         {gift.isCustom ? (
-                            <Banknote className="w-12 h-12" strokeWidth={1} />
+                            <Handshake className="w-12 h-12" strokeWidth={1} />
                         ) : (
                             <Gift className="w-12 h-12" strokeWidth={1} />
                         )}
